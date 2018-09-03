@@ -41,10 +41,11 @@
 .search-bar {
   height: $toolbar-height;
   padding: 20px 15px;
-  border-bottom: 1px solid lighten($gray, 30%);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 329px;
+  border-right: 1px solid lighten($gray, 30%);
 
   .button {
     flex: none;

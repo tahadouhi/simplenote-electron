@@ -14,6 +14,7 @@ import SimplenoteCompactLogo from './icons/simplenote-compact';
 import NoteInfo from './note-info';
 import NoteList from './note-list';
 import NoteEditor from './note-editor';
+import NoteToolbar from './note-toolbar';
 import NavigationBar from './navigation-bar';
 import Auth from './auth';
 import analytics from './analytics';
@@ -79,6 +80,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
         'setNoteDisplay',
         'setMarkdown',
         'setAccountName',
+        'toggleFocusMode',
       ]),
       dispatch
     ),
@@ -122,6 +124,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       onSignOut: PropTypes.func.isRequired,
       authorizeUserWithToken: PropTypes.func.isRequired,
     };
+
+    state = { isViewingRevisions: false };
 
     static defaultProps = {
       onAuthenticate: () => {},
@@ -372,6 +376,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       }
     };
 
+    setIsViewingRevisions = isViewing =>
+      this.setState({ isViewingRevisions: isViewing });
+
     render() {
       const {
         appState: state,
@@ -383,14 +390,16 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         isSmallScreen,
       } = this.props;
       const electron = get(this.state, 'electron');
+      const { isViewingRevisions } = this.state;
       const isMacApp = isElectronMac();
       const filteredNotes = filterNotes(state);
       const hasNotes = filteredNotes.length > 0;
+      const { focusModeEnabled, theme } = settings;
 
       const selectedNote =
         state.note || (!isSmallScreen && hasNotes ? filteredNotes[0] : null);
 
-      const appClasses = classNames('app', `theme-${settings.theme}`, {
+      const appClasses = classNames('app', `theme-${theme}`, {
         'touch-enabled': 'ontouchstart' in document.body,
       });
 
@@ -401,6 +410,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         'navigation-open': state.showNavigation,
         'is-electron': isElectron(),
         'is-macos': isMacApp,
+        'is-focus-mode': focusModeEnabled,
       });
 
       return (
@@ -421,50 +431,71 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               {state.showNavigation && (
                 <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
               )}
-              <div className="source-list theme-color-bg theme-color-fg">
+              <div className="app-toolbar">
                 <SearchBar noteBucket={noteBucket} />
-                {hasNotes ? (
-                  <NoteList
-                    noteBucket={noteBucket}
-                    isSmallScreen={isSmallScreen}
-                  />
-                ) : (
-                  <div className="placeholder-note-list">
-                    <span>No Notes</span>
-                  </div>
-                )}
+                <NoteToolbar
+                  note={selectedNote}
+                  onTrashNote={this.onTrashNote}
+                  onRestoreNote={this.onRestoreNote}
+                  onShareNote={this.onShareNote}
+                  onDeleteNoteForever={this.onDeleteNoteForever}
+                  onRevisions={this.onRevisions}
+                  setIsViewingRevisions={this.setIsViewingRevisions}
+                  onCloseNote={() => this.props.actions.closeNote()}
+                  onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+                  onSetEditorMode={this.onSetEditorMode}
+                  editorMode={state.editorMode}
+                  markdownEnabled={state.markdownEnabled}
+                />
               </div>
-              {selectedNote &&
-                hasNotes && (
-                  <NoteEditor
-                    allTags={state.tags}
-                    editorMode={state.editorMode}
-                    filter={state.filter}
-                    note={selectedNote}
-                    revisions={state.revisions}
-                    onSetEditorMode={this.onSetEditorMode}
-                    onUpdateContent={this.onUpdateContent}
-                    onUpdateNoteTags={this.onUpdateNoteTags}
-                    onTrashNote={this.onTrashNote}
-                    onRestoreNote={this.onRestoreNote}
-                    onShareNote={this.onShareNote}
-                    onDeleteNoteForever={this.onDeleteNoteForever}
-                    onRevisions={this.onRevisions}
-                    onCloseNote={() => this.props.actions.closeNote()}
-                    onNoteInfo={() => this.props.actions.toggleNoteInfo()}
-                    shouldPrint={state.shouldPrint}
-                    onNotePrinted={this.onNotePrinted}
-                  />
-                )}
-              {!hasNotes && (
-                <div className="placeholder-note-detail theme-color-border">
-                  <div className="placeholder-note-toolbar theme-color-border" />
-                  <div className="placeholder-note-editor">
-                    <SimplenoteCompactLogo />
-                  </div>
+              <div className="app-content">
+                <div className="source-list theme-color-bg theme-color-fg">
+                  {hasNotes ? (
+                    <NoteList
+                      noteBucket={noteBucket}
+                      isSmallScreen={isSmallScreen}
+                    />
+                  ) : (
+                    <div className="placeholder-note-list">
+                      <span>No Notes</span>
+                    </div>
+                  )}
                 </div>
-              )}
-              {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
+                {selectedNote &&
+                  hasNotes && (
+                    <NoteEditor
+                      allTags={state.tags}
+                      editorMode={state.editorMode}
+                      filter={state.filter}
+                      note={selectedNote}
+                      noteBucket={noteBucket}
+                      revisions={state.revisions}
+                      onSetEditorMode={this.onSetEditorMode}
+                      onUpdateContent={this.onUpdateContent}
+                      onUpdateNoteTags={this.onUpdateNoteTags}
+                      onTrashNote={this.onTrashNote}
+                      onRestoreNote={this.onRestoreNote}
+                      onShareNote={this.onShareNote}
+                      onDeleteNoteForever={this.onDeleteNoteForever}
+                      onRevisions={this.onRevisions}
+                      onCloseNote={() => this.props.actions.closeNote()}
+                      onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+                      shouldPrint={state.shouldPrint}
+                      onNotePrinted={this.onNotePrinted}
+                      setIsViewingRevisions={this.setIsViewingRevisions}
+                      isViewingRevisions={isViewingRevisions}
+                    />
+                  )}
+                {!hasNotes && (
+                  <div className="placeholder-note-detail theme-color-border">
+                    <div className="placeholder-note-toolbar theme-color-border" />
+                    <div className="placeholder-note-editor">
+                      <SimplenoteCompactLogo />
+                    </div>
+                  </div>
+                )}
+                {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
+              </div>
             </div>
           ) : (
             <Auth

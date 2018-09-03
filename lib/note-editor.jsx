@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import NoteDetail from './note-detail';
 import TagField from './tag-field';
-import NoteToolbar from './note-toolbar';
 import RevisionSelector from './revision-selector';
 import { get, property } from 'lodash';
 
@@ -28,6 +27,8 @@ export class NoteEditor extends Component {
     onCloseNote: PropTypes.func.isRequired,
     onNoteInfo: PropTypes.func.isRequired,
     onPrintNote: PropTypes.func,
+    setIsViewingRevisions: PropTypes.func,
+    isViewingRevisions: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -49,7 +50,6 @@ export class NoteEditor extends Component {
 
   state = {
     revision: null,
-    isViewingRevisions: false,
   };
 
   componentDidUpdate() {
@@ -124,17 +124,14 @@ export class NoteEditor extends Component {
     const { data: { content } } = revision;
 
     onUpdateContent(note, content);
-    this.setIsViewingRevisions(false);
+    this.props.setIsViewingRevisions(false);
   };
 
   onCancelRevision = () => {
     // clear out the revision
     this.setState({ revision: null });
-    this.setIsViewingRevisions(false);
+    this.props.setIsViewingRevisions(false);
   };
-
-  setIsViewingRevisions = isViewing =>
-    this.setState({ isViewingRevisions: isViewing });
 
   storeEditorHasFocus = f => (this.editorHasFocus = f);
 
@@ -155,9 +152,15 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
+    const {
+      editorMode,
+      note,
+      revisions,
+      fontSize,
+      shouldPrint,
+      isViewingRevisions,
+    } = this.props;
     const revision = this.state.revision || note;
-    const isViewingRevisions = this.state.isViewingRevisions;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
 
@@ -196,22 +199,6 @@ export class NoteEditor extends Component {
           onSelectRevision={this.onSelectRevision}
           onCancelRevision={this.onCancelRevision}
         />
-        <div className="note-editor-controls theme-color-border">
-          <NoteToolbar
-            note={note}
-            onTrashNote={this.props.onTrashNote}
-            onRestoreNote={this.props.onRestoreNote}
-            onShareNote={this.props.onShareNote}
-            onDeleteNoteForever={this.props.onDeleteNoteForever}
-            onRevisions={this.props.onRevisions}
-            setIsViewingRevisions={this.setIsViewingRevisions}
-            onCloseNote={this.props.onCloseNote}
-            onNoteInfo={this.props.onNoteInfo}
-            onSetEditorMode={this.props.onSetEditorMode}
-            editorMode={editorMode}
-            markdownEnabled={markdownEnabled}
-          />
-        </div>
         <div className="note-editor-content theme-color-border">
           <div className="note-editor-detail">
             <NoteDetail

@@ -127,6 +127,22 @@ var buildViewMenu = function(settings) {
         ].map(buildRadioGroup(equalTo(settings.theme))),
       },
       {
+        type: 'separator',
+      },
+      {
+        label: 'Focus Mode',
+        accelerator: (function() {
+          return 'CommandOrControl+Shift+F';
+        })(),
+        click(item, focusedWindow) {
+          if (focusedWindow) {
+            focusedWindow.webContents.send('appCommand', {
+              action: 'toggleFocusMode',
+            });
+          }
+        },
+      },
+      {
         label: 'T&oggle Full Screen',
         accelerator: (function() {
           if (process.platform === 'darwin') {
