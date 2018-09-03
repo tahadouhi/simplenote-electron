@@ -449,18 +449,20 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 />
               </div>
               <div className="app-content">
-                <div className="source-list theme-color-bg theme-color-fg">
-                  {hasNotes ? (
-                    <NoteList
-                      noteBucket={noteBucket}
-                      isSmallScreen={isSmallScreen}
-                    />
-                  ) : (
-                    <div className="placeholder-note-list">
-                      <span>No Notes</span>
-                    </div>
-                  )}
-                </div>
+                {!focusModeEnabled && (
+                  <div className="source-list theme-color-bg theme-color-fg">
+                    {hasNotes ? (
+                      <NoteList
+                        noteBucket={noteBucket}
+                        isSmallScreen={isSmallScreen}
+                      />
+                    ) : (
+                      <div className="placeholder-note-list">
+                        <span>No Notes</span>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {selectedNote &&
                   hasNotes && (
                     <NoteEditor
