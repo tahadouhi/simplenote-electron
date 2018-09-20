@@ -46,7 +46,7 @@ DEV_SERVER ?= false
 # Main targets
 .PHONY: start
 start: rebuild-deps
-	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron .
+	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) HOST=$(HOST) PORT=$(PORT) npx electron .
 
 .PHONY: dev
 dev: 
