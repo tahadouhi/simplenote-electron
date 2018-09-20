@@ -35,9 +35,7 @@ SKIP_BUILD ?= false
 HOST ?= 0.0.0.0
 
 # Port for dev server
-PORT ?= 4000
-
-### TODO: changes for HOST and PORT aren't yet reflected in `desktop/app.js`
+PORT ?= 400
 
 # Access dev server or locally built web app files
 DEV_SERVER ?= false
