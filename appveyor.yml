@@ -7,6 +7,18 @@ environment:
   GH_TOKEN:
     secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
 
+configuration:
+  - Test1
+  - Test2
+  - Test3
+  - Test4
+  - Test5
+  - Test6
+  - Test7
+  - Test8
+  - Test9
+  - Test10
+
 image: Visual Studio 2017
 
 install:
@@ -21,6 +33,10 @@ before_build:
 build_script:
   - make build
   - make package-win32
+
+after_build:
+  - (Get-Item release\Simplenote-win-1.2.1.exe).length  
+  - (Get-Item release\Simplenote-win-1.2.1-ia32.appx).length
 
 artifacts:
   - path: release\*.exe
