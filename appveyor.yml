@@ -35,8 +35,8 @@ build_script:
   - make package-win32
 
 after_build:
-  - (Get-Item release\Simplenote-win-1.2.1.exe).length  
-  - (Get-Item release\Simplenote-win-1.2.1-ia32.appx).length
+  - echo (Get-Item release\Simplenote-win-1.2.1.exe).length  
+  - echo (Get-Item release\Simplenote-win-1.2.1-ia32.appx).length
 
 artifacts:
   - path: release\*.exe
