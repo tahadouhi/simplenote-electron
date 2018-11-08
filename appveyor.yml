@@ -5,7 +5,7 @@ environment:
     secure: Sz53shy7P4kPzBKa9shHTw==
   CSC_LINK: .\resources\certificates\win.p12
   GH_TOKEN:
-    secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
+    secure: ZwwKujupL6GicpBRAt3CoZ36pRNicm3ReOR4Gl89pCfmbpiiEzDHHxr+oLt1y2aY
 
 image: Visual Studio 2017
 
