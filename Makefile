@@ -44,7 +44,7 @@ DEV_SERVER ?= false
 
 # electron-builder publish option
 # options: always|onTag|onTagOrDraft|never
-PUBLISH ?= onTag
+PUBLISH ?= always
 
 
 # Main targets
