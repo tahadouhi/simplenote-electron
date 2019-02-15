@@ -293,15 +293,21 @@ export default class NoteContentEditor extends Component {
       spellCheckEnabled,
     } = this.props;
 
-    const setAutoDetectedLanguage = () => {
-      // Auto-detect the note content language to switch spellchecker
-      window.spellCheckHandler.provideHintText(content.text).then(() => {
-        // Use the auto-detected language to set a `lang` attribute on the
-        // note, which helps Chromium in Electron pick an appropriate font
-        this.setState({
-          lang: window.spellCheckHandler.currentSpellcheckerLanguage,
+    const updateLanguage = () => {
+      const minimumContentLength = 10;
+      if (!detectLanguage || content.text.length < minimumContentLength) {
+        window.spellCheckHandler.switchLanguage(navigator.language);
+        this.setState({ lang: undefined });
+      } else {
+        // Auto-detect the note content language to switch spellchecker
+        window.spellCheckHandler.provideHintText(content.text).then(() => {
+          // Use the auto-detected language to set a `lang` attribute on the
+          // note, which helps Chromium in Electron pick an appropriate font
+          this.setState({
+            lang: window.spellCheckHandler.currentSpellcheckerLanguage,
+          });
         });
-      });
+      }
     };
 
     // Only relevant in Electron
@@ -313,20 +319,14 @@ export default class NoteContentEditor extends Component {
       if (spellCheckEnabled !== prevProps.spellCheckEnabled) {
         this.editorKey += 1;
         this.forceUpdate();
+        updateLanguage();
       }
 
-      // Update language related settings when another note is selected
-      if (noteId !== prevProps.noteId && detectLanguage) {
-        setAutoDetectedLanguage();
-      }
-
-      if (detectLanguage !== prevProps.detectLanguage) {
-        if (detectLanguage) {
-          setAutoDetectedLanguage();
-        } else {
-          window.spellCheckHandler.switchLanguage(navigator.language);
-          this.setState({ lang: undefined });
-        }
+      if (
+        noteId !== prevProps.noteId ||
+        detectLanguage !== prevProps.detectLanguage
+      ) {
+        updateLanguage();
       }
     }
 
