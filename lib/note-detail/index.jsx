@@ -18,6 +18,7 @@ export class NoteDetail extends Component {
   static displayName = 'NoteDetail';
 
   static propTypes = {
+    detectLanguage: PropTypes.bool.isRequired,
     dialogs: PropTypes.array.isRequired,
     filter: PropTypes.string.isRequired,
     fontSize: PropTypes.number,
@@ -184,6 +185,7 @@ export class NoteDetail extends Component {
 
   render() {
     const {
+      detectLanguage,
       note,
       filter,
       fontSize,
@@ -228,6 +230,7 @@ export class NoteDetail extends Component {
               >
                 <NoteContentEditor
                   ref={this.saveEditorRef}
+                  detectLanguage={detectLanguage}
                   spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}
@@ -249,6 +252,7 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   dialogs: state.dialogs,
   filter: state.filter,
   isViewingRevisions: state.isViewingRevisions,
+  detectLanguage: settings.languageDetectionEnabled,
   shouldPrint: state.shouldPrint,
   showNoteInfo: state.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,

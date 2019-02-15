@@ -68,6 +68,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
         'setMarkdown',
         'setAccountName',
         'toggleFocusMode',
+        'toggleLanguageDetection',
         'toggleSpellCheck',
       ]),
       dispatch
