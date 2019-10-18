@@ -23,7 +23,7 @@ export class SearchSuggestions extends Component {
       <div className="search-suggestions">
         <div className="search-suggestion-row" onClick={() => onSearch(query)}>
           <SmallSearchIcon />
-          {query}
+          <div className="search-suggestion">{query}</div>
         </div>
         {shouldShowTagSuggestions &&
           tags
@@ -37,7 +37,9 @@ export class SearchSuggestions extends Component {
                 onClick={() => onSearch(`tag:${tag.id}`)}
               >
                 <TagIcon />
-                {decodeURIComponent(tag.id)}
+                <div className="search-suggestion">
+                  {decodeURIComponent(tag.id)}
+                </div>
               </div>
             ))}
       </div>
