@@ -26,7 +26,7 @@ export class SearchSuggestions extends Component {
         </div>
         {tags
           .filter(function(tag) {
-            return tag.id.includes(query);
+            return tag.id.includes(encodeURIComponent(query));
           })
           .map(tag => (
             <div
@@ -35,7 +35,7 @@ export class SearchSuggestions extends Component {
               onClick={() => onSearch(`tag:${tag.id}`)}
             >
               <TagIcon />
-              {tag.id}
+              {decodeURIComponent(tag.id)}
             </div>
           ))}
       </div>
