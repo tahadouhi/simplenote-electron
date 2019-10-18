@@ -17,6 +17,7 @@ export class SearchSuggestions extends Component {
     const { query, onSearch, tags } = this.props;
     // const screenReaderLabel =
     //   'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
+    const shouldShowTagSuggestions = query.length > 2;
 
     return (
       <div className="search-suggestions">
@@ -24,20 +25,21 @@ export class SearchSuggestions extends Component {
           <SmallSearchIcon />
           {query}
         </div>
-        {tags
-          .filter(function(tag) {
-            return tag.id.includes(encodeURIComponent(query));
-          })
-          .map(tag => (
-            <div
-              key={tag.id}
-              className="search-suggestion-row"
-              onClick={() => onSearch(`tag:${tag.id}`)}
-            >
-              <TagIcon />
-              {decodeURIComponent(tag.id)}
-            </div>
-          ))}
+        {shouldShowTagSuggestions &&
+          tags
+            .filter(function(tag) {
+              return tag.id.startsWith(encodeURIComponent(query));
+            })
+            .map(tag => (
+              <div
+                key={tag.id}
+                className="search-suggestion-row"
+                onClick={() => onSearch(`tag:${tag.id}`)}
+              >
+                <TagIcon />
+                {decodeURIComponent(tag.id)}
+              </div>
+            ))}
       </div>
     );
   }
