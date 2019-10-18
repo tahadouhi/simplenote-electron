@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
@@ -11,6 +11,7 @@ const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
 const KEY_ENTER = 13;
+const SEARCH_DELAY = 500;
 
 export class SearchField extends Component {
   static displayName = 'SearchField';
@@ -40,7 +41,7 @@ export class SearchField extends Component {
 
   doSearch = query => {
     this.setState({ query, searchSelected: true });
-    this.props.onSearch(query);
+    this.debouncedSearch(query);
   };
 
   interceptEsc = event => {
@@ -57,13 +58,17 @@ export class SearchField extends Component {
 
   storeInput = r => (this.inputField = r);
 
+  debouncedSearch = debounce(query => this.props.onSearch(query), SEARCH_DELAY);
+
   update = ({ target: { value: query } }) => {
     this.setState({ query, searchSelected: false });
+    this.debouncedSearch(query);
   };
 
   clearQuery = () => {
-    this.setState({ query: '', searchSelected: false });
-    this.props.onSearch('');
+    this.setState({ query: '' });
+    this.debouncedSearch('');
+    this.debouncedSearch.flush();
   };
 
   render() {
